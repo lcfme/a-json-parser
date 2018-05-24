@@ -9,6 +9,24 @@ function tokenize(str) {
             at++;
             continue;
         }
+        if (ch === '/' && str[at + 1] === '/') {
+            at += 2;
+            ch = str[at];
+            while (ch && ch !== '\n') {
+                ch = str[++at];
+            }
+            continue;
+        }
+
+        if (ch === '/' && str[at + 1] === '*') {
+            at += 2;
+            ch = str[at];
+            while (ch && !(ch === '*' && str[at + 1] === '/')) {
+                ch = str[++at];
+            }
+            at += 2;
+            continue;
+        }
 
         if (/\d/.test(ch)) {
             let value = '';
@@ -124,8 +142,9 @@ function tokenize(str) {
         });
         at++;
         continue;
-
-        throw new Error('tokenize error at: ' + at);
+    }
+    if (at > len + 1) {
+        throw new Error('tokenize error');
     }
     return tokens;
 }
@@ -153,7 +172,7 @@ function parseToken(tokens) {
     function parseNumber() {
         var value = token.value;
         token = tokens[++at];
-        return parseInt(value);
+        return parseFloat(value);
     }
 
     function parseString() {
@@ -231,5 +250,5 @@ function parseToken(tokens) {
     }
 }
 module.exports = function(str) {
-    parseToken(tokenize(str));
+    return parseToken(tokenize(str));
 };
