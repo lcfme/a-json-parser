@@ -30,7 +30,7 @@ function tokenize(str) {
 
         if (/\d/.test(ch)) {
             let value = '';
-            while (ch && /[\d\.]/.test(ch)) {
+            while (ch && /[\d.]/.test(ch)) {
                 if (value.indexOf('.') > -1 && ch === '.')
                     throw new Error('tokenize number error');
                 value += ch;
