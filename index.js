@@ -44,7 +44,7 @@ function tokenize(str) {
         if (ch === '.') {
             tokens.push({
                 name: '.',
-                value: ch,
+                value: ch
             });
             at++;
             continue;
@@ -194,7 +194,10 @@ function parseToken(tokens) {
         let start_sign = token.name,
             value = '';
         token = tokens[++at];
-        while (token && !(token.name === start_sign && tokens[at - 1].name !== 'escape')) {
+        while (
+            token &&
+      !(token.name === start_sign && tokens[at - 1].name !== 'escape')
+        ) {
             value += token.value;
             token = tokens[++at];
         }

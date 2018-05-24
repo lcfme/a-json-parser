@@ -1,7 +1,8 @@
 {
   "name": "a-json-parser",
-  "version": "0.0.9",
-  "description": "a json parse is compacitable with Javascript object literal and comment",
+  "version": "0.0.11",
+  "description":
+    "a json parse is compacitable with Javascript object literal and comment",
   "main": "index.js",
   "scripts": {
     "build": "webpack --config ./webpack.config.js"
@@ -19,5 +20,6 @@
   "devDependencies": {
     "webpack": "^4.8.3",
     "webpack-cli": "^2.1.4"
-  }
+  },
+  "keywords": ["json", "comment", "annotation", "parser"]
 }
