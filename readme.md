@@ -2,15 +2,15 @@
 
 ------
 
-use 
-```
+> use 
+```javascript
 npm install --save a-json-parser
 ```
-to install it
+> to install it
 
-in your browser you can import jsondecode.min.js via script tag and use 
-```
+> in your browser you can import jsondecode.min.js via script tag and use 
+```javascript
 JSONParser('/* an Example */{'^_^': 0}');
 ```
 
-Enjoy!
+### Enjoy!
