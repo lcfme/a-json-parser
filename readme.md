@@ -1,6 +1,6 @@
 # A Tiny JSON Parser That IS Compitable with plain JavaScript Object Literal and JavaScript Comment
 
-------
+The JSON parse can parse JSON text with code annotation.
 
 > use 
 ```javascript
