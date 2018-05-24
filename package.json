@@ -1,7 +1,7 @@
 {
   "name": "a-json-parser",
-  "version": "0.0.7",
-  "description": "",
+  "version": "0.0.9",
+  "description": "a json parse is compacitable with Javascript object literal and comment",
   "main": "index.js",
   "scripts": {
     "build": "webpack --config ./webpack.config.js"
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/lcfme/a-json-parser.git"
   },
-  "author": "",
+  "author": "liuchaofan",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/lcfme/a-json-parser/issues"
