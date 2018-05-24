@@ -30,9 +30,7 @@ function tokenize(str) {
 
         if (/\d/.test(ch)) {
             let value = '';
-            while (ch && /[\d.]/.test(ch)) {
-                if (value.indexOf('.') > -1 && ch === '.')
-                    throw new Error('tokenize number error');
+            while (ch && /\d/.test(ch)) {
                 value += ch;
                 ch = str[++at];
             }
@@ -42,6 +40,16 @@ function tokenize(str) {
             });
             continue;
         }
+
+        if (ch === '.') {
+            tokens.push({
+                name: '.',
+                value: ch,
+            });
+            at++;
+            continue;
+        }
+
         if (/\w/.test(ch)) {
             let value = '';
             while (ch && /[\w\d]/.test(ch)) {
@@ -170,8 +178,15 @@ function parseToken(tokens) {
         throw new Error('parse error: unknow type');
     }
     function parseNumber() {
-        var value = token.value;
-        token = tokens[++at];
+        let value = '';
+        token = tokens[at];
+        while (token && (token.name === 'number' || token.name === '.')) {
+            if (value.indexOf('.') > -1 && token.name === '.') {
+                throw new Error('parse number error');
+            }
+            value += token.value;
+            token = tokens[++at];
+        }
         return parseFloat(value);
     }
 
@@ -179,15 +194,12 @@ function parseToken(tokens) {
         let start_sign = token.name,
             value = '';
         token = tokens[++at];
-        while (token) {
-            if (token.name === start_sign && tokens[at - 1].name !== 'escape') {
-                token = tokens[++at];
-                return value;
-            }
+        while (token && !(token.name === start_sign && tokens[at - 1].name !== 'escape')) {
             value += token.value;
             token = tokens[++at];
         }
-        throw new Error('parse string error');
+        token = tokens[++at];
+        return value;
     }
 
     function parseObject() {
