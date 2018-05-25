@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Liu Chaofan
  * MIT Liencese
  */
@@ -166,8 +166,16 @@ function tokenize(str) {
 function parseToken(tokens) {
     if (tokens.length === 0) return null;
     let at = 0,
-        token = tokens[at];
-    return parse();
+        token = tokens[at],
+        len = tokens.length;
+    var r = parse();
+    if (at !== len) {
+    // eslint-disable-next-line
+    console.warn(
+            'It maybe have errors in result. there are tokens remained in buffer.'
+        );
+    }
+    return r;
     function parse() {
         token = tokens[at];
         if (token.name === 'number') {
@@ -220,7 +228,10 @@ function parseToken(tokens) {
             if (token.name === 'string') {
                 key = token.value;
                 token = tokens[++at];
-            } else if (token.name === 'quote_single' || token.name === 'quote_double'){
+            } else if (
+                token.name === 'quote_single' ||
+        token.name === 'quote_double'
+            ) {
                 key = parseString();
             } else {
                 throw new Error('parse object key error at: ' + at);

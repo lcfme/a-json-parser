@@ -1,6 +1,6 @@
 {
   "name": "a-json-parser",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description":
     "a json parse is compacitable with Javascript object literal and comment",
   "main": "index.js",
