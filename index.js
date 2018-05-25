@@ -225,21 +225,13 @@ function parseToken(tokens) {
             } else {
                 throw new Error('parse object key error at: ' + at);
             }
-            if (key) {
-                if (token.name !== ':') {
-                    throw new Error('parse object error at:' + at);
-                }
-                value = parse(tokens.slice(++at));
-                _o[key] = value;
-                if (token.name === ',') {
-                    token = tokens[++at];
-                    continue;
-                }
-                if (token.name !== 'object_end') {
-                    throw new Error('parse object error end at: ' + at);
-                }
-            } else {
-                break;
+            if (token.name !== ':') {
+                throw new Error('parse object error at:' + at);
+            }
+            value = parse(tokens.slice(++at));
+            _o[key] = value;
+            if (token.name === ',') {
+                token = tokens[++at];
             }
         }
         token = tokens[++at];
