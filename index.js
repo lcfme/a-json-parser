@@ -236,11 +236,28 @@ function parseToken(tokens) {
             } else {
                 throw new Error('parse object key error at: ' + at);
             }
-            if (token.name !== ':') {
-                throw new Error('parse object error at:' + at);
+
+            if (!token) {
+                throw new Error('parse object error : at: ' + at);
             }
-            value = parse(tokens.slice(++at));
+
+            if (token.name !== ':') {
+                throw new Error('parse object error : at:' + at);
+            }
+
+            token = tokens[++at];
+
+            if (!token) {
+                throw new Error('parse object error value at: ' + at);
+            }
+
+            value = parse(tokens.slice(at));
             _o[key] = value;
+
+            if (!token) {
+                throw new Error('parse object error end at: ' + at);
+            }
+
             if (token.name === ',') {
                 token = tokens[++at];
             }
@@ -255,6 +272,9 @@ function parseToken(tokens) {
         while (token && token.name !== 'array_end') {
             token = tokens[at];
             _a.push(parse(tokens.slice(at)));
+            if (!token) {
+                throw new Error('parse array error end at: ' + at);
+            }
             if (token.name === ',') {
                 token = tokens[++at];
                 continue;
