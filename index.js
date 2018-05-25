@@ -181,14 +181,14 @@ function parseToken(tokens) {
         } else if (token.name === 'string') {
             return parseWords();
         }
-        throw new Error('parse error: unknow type');
+        throw new Error('parse error: unknow type at: ' + at);
     }
     function parseNumber() {
         let value = '';
         token = tokens[at];
         while (token && (token.name === 'number' || token.name === '.')) {
             if (value.indexOf('.') > -1 && token.name === '.') {
-                throw new Error('parse number error');
+                throw new Error('parse number error at: ' + at);
             }
             value += token.value;
             token = tokens[++at];
@@ -220,12 +220,14 @@ function parseToken(tokens) {
             if (token.name === 'string') {
                 key = token.value;
                 token = tokens[++at];
-            } else {
+            } else if (token.name === 'quote_single' || token.name === 'quote_double'){
                 key = parseString();
+            } else {
+                throw new Error('parse object key error at: ' + at);
             }
             if (key) {
                 if (token.name !== ':') {
-                    throw new Error('parse object error :');
+                    throw new Error('parse object error at:' + at);
                 }
                 value = parse(tokens.slice(++at));
                 _o[key] = value;
@@ -234,7 +236,7 @@ function parseToken(tokens) {
                     continue;
                 }
                 if (token.name !== 'object_end') {
-                    throw new Error('parse object error end');
+                    throw new Error('parse object error end at: ' + at);
                 }
             } else {
                 break;
@@ -255,7 +257,7 @@ function parseToken(tokens) {
                 continue;
             }
             if (token.name !== 'array_end') {
-                throw new Error('parse array error end');
+                throw new Error('parse array error end at: ' + at);
             }
         }
         token = tokens[++at];
@@ -277,7 +279,7 @@ function parseToken(tokens) {
                 return null;
             }
         }
-        throw new Error('parse words error');
+        throw new Error('parse words error at: ' + at);
     }
 }
 module.exports = function(str) {
