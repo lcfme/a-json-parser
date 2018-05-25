@@ -178,15 +178,15 @@ function parseToken(tokens) {
     return r;
     function parse() {
         token = tokens[at];
-        if (token.name === 'number') {
+        if (token && token.name === 'number') {
             return parseNumber();
-        } else if (token.name === 'quote_single' || token.name === 'quote_double') {
+        } else if (token && (token.name === 'quote_single' || token.name === 'quote_double')) {
             return parseString();
-        } else if (token.name === 'object_begin') {
+        } else if (token && token.name === 'object_begin') {
             return parseObject();
-        } else if (token.name === 'array_begin') {
+        } else if (token && token.name === 'array_begin') {
             return parseArray();
-        } else if (token.name === 'string') {
+        } else if (token && token.name === 'string') {
             return parseWords();
         }
         throw new Error('parse error: unknow type at: ' + at);
