@@ -1,3 +1,9 @@
+/**
+ * 
+ * Liu Chaofan
+ * MIT Liencese
+ */
+
 function tokenize(str) {
     let at = 0,
         len = str.length,
@@ -151,7 +157,7 @@ function tokenize(str) {
         at++;
         continue;
     }
-    if (at > len + 1) {
+    if (at > len) {
         throw new Error('tokenize error');
     }
     return tokens;
