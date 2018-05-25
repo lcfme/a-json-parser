@@ -157,7 +157,7 @@ function tokenize(str) {
         at++;
         continue;
     }
-    if (at > len) {
+    if (at !== len) {
         throw new Error('tokenize error');
     }
     return tokens;
@@ -172,7 +172,7 @@ function parseToken(tokens) {
     if (at !== len) {
     // eslint-disable-next-line
     console.warn(
-            'It maybe have errors in result. there are tokens remained in buffer.'
+            'It maybe contains errors in result. There are tokens remained in buffer.'
         );
     }
     return r;
