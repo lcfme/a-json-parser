@@ -58,7 +58,7 @@ function tokenize(str) {
 
         if (/\w/.test(ch)) {
             let value = '';
-            while (ch && /[\w]/.test(ch)) {
+            while (ch && /\w/.test(ch)) {
                 value += ch;
                 ch = str[++at];
             }
