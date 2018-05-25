@@ -11,10 +11,6 @@ function tokenize(str) {
     while (at < len) {
         let ch = str[at];
 
-        if (/\s/.test(ch)) {
-            at++;
-            continue;
-        }
         if (ch === '/' && str[at + 1] === '/') {
             at += 2;
             ch = str[at];
@@ -34,25 +30,22 @@ function tokenize(str) {
             continue;
         }
 
-        if (/\d/.test(ch)) {
+        if (/[\d.]/.test(ch)) {
             let value = '';
-            while (ch && /\d/.test(ch)) {
+            while (ch && /[\d.]/.test(ch)) {
+                if (value.indexOf('.') > -1 && ch === '.') {
+                    throw new Error('Invalid Number');
+                }
                 value += ch;
                 ch = str[++at];
+            }
+            if (!/\d/.test(value)) {
+                throw new Error('Invalid Number');
             }
             tokens.push({
                 name: 'number',
                 value
             });
-            continue;
-        }
-
-        if (ch === '.') {
-            tokens.push({
-                name: '.',
-                value: ch
-            });
-            at++;
             continue;
         }
 
@@ -62,6 +55,22 @@ function tokenize(str) {
                 value += ch;
                 ch = str[++at];
             }
+            tokens.push({
+                name: 'word',
+                value
+            });
+            continue;
+        }
+
+        if (ch === '"' || ch === '\'') {
+            let start_sign = ch,
+                value = '';
+            ch = str[++at];
+            while (ch && !(ch === start_sign && ch[at - 1] !== '\\')) {
+                value = value + ch;
+                ch = str[++at];
+            }
+            at++;
             tokens.push({
                 name: 'string',
                 value
@@ -105,33 +114,6 @@ function tokenize(str) {
             continue;
         }
 
-        if (ch === '\'') {
-            tokens.push({
-                name: 'quote_single',
-                value: ch
-            });
-            at++;
-            continue;
-        }
-
-        if (ch === '"') {
-            tokens.push({
-                name: 'quote_double',
-                value: ch
-            });
-            at++;
-            continue;
-        }
-
-        if (ch === '\\') {
-            tokens.push({
-                name: 'escape',
-                value: ch
-            });
-            at++;
-            continue;
-        }
-
         if (ch === ':') {
             tokens.push({
                 name: ':',
@@ -150,15 +132,15 @@ function tokenize(str) {
             continue;
         }
 
-        tokens.push({
-            name: 'char',
-            value: ch
-        });
-        at++;
-        continue;
+        if (/\s/.test(ch)) {
+            at++;
+            continue;
+        }
+
+        throw new Error('tokenize error');
     }
     if (at !== len) {
-        throw new Error('tokenize error');
+        throw new Error('tokenize length error');
     }
     return tokens;
 }
@@ -180,41 +162,28 @@ function parseToken(tokens) {
         token = tokens[at];
         if (token && token.name === 'number') {
             return parseNumber();
-        } else if (token && (token.name === 'quote_single' || token.name === 'quote_double')) {
+        } else if (token.name === 'string')
+        {
             return parseString();
         } else if (token && token.name === 'object_begin') {
             return parseObject();
         } else if (token && token.name === 'array_begin') {
             return parseArray();
-        } else if (token && token.name === 'string') {
+        } else if (token && token.name === 'word') {
             return parseWords();
         }
         throw new Error('parse error: unknow type at: ' + at);
     }
     function parseNumber() {
-        let value = '';
         token = tokens[at];
-        while (token && (token.name === 'number' || token.name === '.')) {
-            if (value.indexOf('.') > -1 && token.name === '.') {
-                throw new Error('parse number error at: ' + at);
-            }
-            value += token.value;
-            token = tokens[++at];
-        }
+        let value = token.value;
+        token = tokens[++at];
         return parseFloat(value);
     }
 
     function parseString() {
-        let start_sign = token.name,
-            value = '';
-        token = tokens[++at];
-        while (
-            token &&
-      !(token.name === start_sign && tokens[at - 1].name !== 'escape')
-        ) {
-            value += token.value;
-            token = tokens[++at];
-        }
+        token = tokens[at];
+        let value = token.value;
         token = tokens[++at];
         return value;
     }
@@ -225,25 +194,19 @@ function parseToken(tokens) {
         while (token && token.name !== 'object_end') {
             var key, value;
             token = tokens[at];
-            if (token.name === 'string') {
+            if (token.name === 'word') {
                 key = token.value;
                 token = tokens[++at];
-            } else if (
-                token.name === 'quote_single' ||
-        token.name === 'quote_double'
-            ) {
+            } else if (token.name === 'string') {
                 key = parseString();
             } else {
                 throw new Error('parse object key error at: ' + at);
             }
 
-            if (!token) {
+            if (!token || token.name !== ':') {
                 throw new Error('parse object error : at: ' + at);
             }
 
-            if (token.name !== ':') {
-                throw new Error('parse object error : at:' + at);
-            }
 
             token = tokens[++at];
 
@@ -288,7 +251,7 @@ function parseToken(tokens) {
     }
 
     function parseWords() {
-        if (token.name === 'string') {
+        if (token.name === 'word') {
             if (token.value === 'false') {
                 token = tokens[++at];
                 return false;
